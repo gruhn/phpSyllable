@@ -103,7 +103,7 @@ class Syllable {
 	/**
 	 * Set the character encoding to use.
 	 * Specify `null` encoding to not apply any encoding at all.
-	 * 
+	 *
 	 * @param string|null $encoding Either name of encoding or null to disable
 	 */
 	public static function setEncoding($encoding = null)
@@ -290,7 +290,7 @@ class Syllable {
 
 	/**
 	 * Add one or more elements to exclude from HTML
-	 * 
+	 *
 	 * @param string|string[] $elements
 	 */
 	public function excludeElement($elements)
@@ -302,7 +302,7 @@ class Syllable {
 
 	/**
 	 * Add one or more elements with attributes to exclude from HTML
-	 * 
+	 *
 	 * @param string|string[] $attribute
 	 * @param string|null $value
 	 */
@@ -317,7 +317,7 @@ class Syllable {
 
 	/**
 	 * Add one or more xpath queries to exclude from HTML
-	 * 
+	 *
 	 * @param string|string[] $excludes
 	 */
 	public function excludeXpath($queries)
@@ -329,7 +329,7 @@ class Syllable {
 
 	/**
 	 * Add one or more elements to include from HTML
-	 * 
+	 *
 	 * @param string|string[] $elements
 	 */
 	public function includeElement($elements)
@@ -341,7 +341,7 @@ class Syllable {
 
 	/**
 	 * Add one or more elements with attributes to include from HTML
-	 * 
+	 *
 	 * @param string|string[] $attribute
 	 * @param string|null $value
 	 */
@@ -356,7 +356,7 @@ class Syllable {
 
 	/**
 	 * Add one or more xpath queries to include from HTML
-	 * 
+	 *
 	 * @param string|string[] $excludes
 	 */
 	public function includeXpath($queries)
@@ -452,9 +452,13 @@ class Syllable {
 	 */
 	public function hyphenateHtml($html)
 	{
+    $utf8Tag = '<?xml encoding="utf-8" ?>';
+
+		$html = $utf8Tag . $html;
+
 		$dom = new DOMDocument();
 		$dom->resolveExternals = true;
-		$dom->loadHTML($html);
+		$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
 		// filter excludes
 		$xpath = new DOMXPath($dom);
@@ -463,7 +467,10 @@ class Syllable {
 
 		$this->hyphenateHtmlDom($dom, $excludedNodes, $includedNodes);
 
-		return $dom->saveHTML();
+		$html = $dom->saveHTML();
+		$html = substr($html, strlen($utf8Tag));
+
+		return $html;
 	}
 
 	/**
@@ -498,7 +505,7 @@ class Syllable {
 
 	/**
 	 * Test if the node is known
-	 * 
+	 *
 	 * @param DOMNode $node
 	 * @param DOMNodeList $nodes
 	 * @return boolean
