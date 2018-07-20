@@ -276,7 +276,7 @@
 		public function hyphenateHtml($html) {
 			$dom = new DOMDocument();
 			$dom->resolveExternals = true;
-			$dom->loadHTML($html);
+			$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
 			$this->hyphenateHtmlDom($dom);
 
